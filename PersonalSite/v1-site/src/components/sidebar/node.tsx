@@ -14,7 +14,6 @@ export default function Node ({
     node,
     onClick,
     level,
-    isLast, 
     hoverBg
 }: NodeProps) {
     const [isOpen, setIsOpen] = useState(false);

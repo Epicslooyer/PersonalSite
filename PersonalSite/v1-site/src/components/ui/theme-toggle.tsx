@@ -12,15 +12,12 @@ export function ThemeToggle({ inSidebar = false }: ThemeToggleProps) {
     const { setTheme, resolvedTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [showCursor, setShowCursor] = useState(true);
-    // Only need position state if not in sidebar
     const [position, setPosition] = useState({ x: 20, y: 20 });
     const [isDragging, setIsDragging] = useState(false);
     const dragOffsetRef = useRef({ x: 0, y: 0 });    useEffect(() => {
         setMounted(true);
         
-        // Only setup draggable positioning if not in sidebar
         if (!inSidebar && typeof window !== 'undefined') {
-            // Set initial position to top right with some padding
             const updatePosition = () => {
                 setPosition({ 
                     x: window.innerWidth - 300, 
@@ -28,13 +25,10 @@ export function ThemeToggle({ inSidebar = false }: ThemeToggleProps) {
                 });
             };
             
-            // Set initial position
             updatePosition();
             
-            // Update position on window resize
             window.addEventListener('resize', updatePosition);
             
-            // Cleanup
             return () => {
                 window.removeEventListener('resize', updatePosition);
             };
@@ -49,7 +43,6 @@ export function ThemeToggle({ inSidebar = false }: ThemeToggleProps) {
         return () => clearInterval(interval);
     }, []);
 
-    // Add drag handlers
     useEffect(() => {
         if (!mounted) return;
 
@@ -66,7 +59,6 @@ export function ThemeToggle({ inSidebar = false }: ThemeToggleProps) {
             setIsDragging(false);
         };
 
-        // Add event listeners when dragging starts
         if (isDragging) {
             document.addEventListener('mousemove', handleMouseMove);
             document.addEventListener('mouseup', handleMouseUp);
@@ -79,12 +71,9 @@ export function ThemeToggle({ inSidebar = false }: ThemeToggleProps) {
         };
     }, [isDragging, mounted]);
 
-    // Handle mouse down to start dragging
     const handleMouseDown = (e: React.MouseEvent) => {
-        // Prevent button click when starting drag
         e.preventDefault();
         
-        // Calculate offset from the top-left corner of the toggle
         const toggleRect = e.currentTarget.getBoundingClientRect();
         dragOffsetRef.current = {
             x: e.clientX - toggleRect.left,
@@ -99,20 +88,17 @@ export function ThemeToggle({ inSidebar = false }: ThemeToggleProps) {
     }
 
     const isDark = resolvedTheme === "dark";
-      // Determine classes and styles based on whether it's in the sidebar or floating
     const buttonBaseClasses = "p-2 font-mono flex items-center gap-2 border rounded shadow-md hover:opacity-90 transition-opacity";
     const buttonClassNames = inSidebar 
         ? `${buttonBaseClasses} w-full`
         : `${buttonBaseClasses} fixed cursor-move`;
 
-    // Get theme-specific styles
     const themeStyles = {
         backgroundColor: isDark ? '#282c34' : '#f0f0f0',
         color: isDark ? '#4ade80' : '#374151',
         borderColor: isDark ? '#4c5772' : '#d1d5db',
     };
     
-    // Only apply position styles if not in sidebar
     const positionStyles = !inSidebar ? {
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -128,7 +114,6 @@ export function ThemeToggle({ inSidebar = false }: ThemeToggleProps) {
                 ...positionStyles
             }}
             onClick={(e: React.MouseEvent) => {
-                // Only toggle theme if we're not dragging or if in sidebar
                 if (inSidebar || !isDragging) {
                     setTheme(isDark ? "light" : "dark");
                 }

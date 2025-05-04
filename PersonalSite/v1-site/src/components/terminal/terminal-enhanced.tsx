@@ -4,7 +4,6 @@ import { useUtilityTerminal } from "./utilityterminal";
 import TerminalOutput from "./Terminaloutput";
 import TerminalInput from "./Terminalinput";
 import { useTheme } from "next-themes";
-import { terminalmode } from "./utilityterminal";
 import Bottom from "./bar/bottom";
 import Top from "./bar/top";
 import SideBar from "../sidebar/bar";
@@ -46,12 +45,10 @@ export default function Terminal({ pages }: TerminalProps) {
     const terminalText = theme === "dark" ? "text-gray-300" : "text-gray-800";    
     const containerRef = React.useRef<HTMLDivElement>(null);
     
-    // Check if we should show boot sequence
     useEffect(() => {
-        // Check localStorage if boot has been shown before
         if (typeof window !== 'undefined') {
             const hasBootedBefore = localStorage.getItem('bootComplete') === 'true';
-            // Only skip boot if it's been seen before
+
             if (hasBootedBefore) {
                 setShowBoot(false);
             }
@@ -59,12 +56,10 @@ export default function Terminal({ pages }: TerminalProps) {
     }, []);
     
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
-        // Add debug info for troubleshooting
         const debugMsg = `Key: ${event.key}, Mode: ${mode}, ShowBoot: ${showBoot}`;
         console.log(debugMsg);
         setDebugInfo(debugMsg);
         
-        // Skip keyboard handling during boot sequence
         if (showBoot) return;
         
         const target = event.target as HTMLElement;
@@ -82,19 +77,15 @@ export default function Terminal({ pages }: TerminalProps) {
             }
         }
         
-        // Always process Escape key to exit modes
         if (event.key === 'Escape') {
             event.preventDefault();
             changeMode("normal");
         }
     }, [mode, changeMode, showBoot, setDebugInfo]);
     
-    // Setup keyboard event listeners
     useEffect(() => {
-        // Apply event listener to the whole document instead of just the container
         document.addEventListener("keydown", handleKeyDown);
         
-        // Focus the container initially (if not in boot sequence)
         if (containerRef.current && !showBoot) {
             containerRef.current.focus();
         }
@@ -127,13 +118,11 @@ export default function Terminal({ pages }: TerminalProps) {
                 {showBoot ? (
                     <div className="flex-1 overflow-y-auto">
                         <BootSequence onComplete={() => {
-                            // When boot completes, remember it in localStorage and update state
                             if (typeof window !== 'undefined') {
                                 localStorage.setItem('bootComplete', 'true');
                             }
                             setShowBoot(false);
                             
-                            // Force focus back to terminal container to ensure keyboard shortcuts work
                             setTimeout(() => {
                                 if (containerRef.current) {
                                     containerRef.current.focus();
@@ -157,13 +146,6 @@ export default function Terminal({ pages }: TerminalProps) {
                     </>
                 )}
             </div>
-            
-            {/* Debug info - remove in production */}
-            {process.env.NODE_ENV !== 'production' && (
-                <div className="fixed bottom-0 left-0 bg-red-800 text-white text-xs p-1 opacity-70 z-50">
-                    {debugInfo}
-                </div>
-            )}
         </div>
     );
 }

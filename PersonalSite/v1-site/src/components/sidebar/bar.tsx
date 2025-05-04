@@ -5,12 +5,6 @@ import { ThemeToggle } from "../ui/theme-toggle"; // Re-add ThemeToggle import
 import Node from "./node";
 import type { FileSysNode } from "../terminal/terminal";
 
-interface File {
-    name: string;
-    command: string;
-    icon: string;
-}
-
 interface BarProps {
     tree: FileSysNode[];
     onFileClick: (command: string) => void;
