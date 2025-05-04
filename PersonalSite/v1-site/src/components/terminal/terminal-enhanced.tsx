@@ -39,7 +39,6 @@ export default function Terminal({ pages }: TerminalProps) {
     const { theme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [showBoot, setShowBoot] = useState(true);
-    const [debugInfo, setDebugInfo] = useState<string>('');
     const { entry, input, setInput, handleCommand, currentPage, mode, changeMode } = useUtilityTerminal(pages);
     const terminalBg = theme === "dark" ? "bg-black" : "bg-white";
     const terminalText = theme === "dark" ? "text-gray-300" : "text-gray-800";    
@@ -56,9 +55,6 @@ export default function Terminal({ pages }: TerminalProps) {
     }, []);
     
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
-        const debugMsg = `Key: ${event.key}, Mode: ${mode}, ShowBoot: ${showBoot}`;
-        console.log(debugMsg);
-        setDebugInfo(debugMsg);
         
         if (showBoot) return;
         
@@ -81,7 +77,7 @@ export default function Terminal({ pages }: TerminalProps) {
             event.preventDefault();
             changeMode("normal");
         }
-    }, [mode, changeMode, showBoot, setDebugInfo]);
+    }, [mode, changeMode, showBoot]);
     
     useEffect(() => {
         document.addEventListener("keydown", handleKeyDown);

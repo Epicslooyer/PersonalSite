@@ -113,7 +113,7 @@ export function ThemeToggle({ inSidebar = false }: ThemeToggleProps) {
                 ...themeStyles,
                 ...positionStyles
             }}
-            onClick={(e: React.MouseEvent) => {
+            onClick={() => {
                 if (inSidebar || !isDragging) {
                     setTheme(isDark ? "light" : "dark");
                 }
