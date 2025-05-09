@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, JSX } from "react";
 import { useUtilityTerminal } from "./utilityterminal";
 import TerminalOutput from "./Terminaloutput";
 import TerminalInput from "./Terminalinput";
@@ -10,7 +10,7 @@ import SideBar from "../sidebar/bar";
 import BootSequence from "./utilities/boot";
 
 interface TerminalProps {
-  pages: Record<string, string>;
+  pages: Record<string, string | JSX.Element>;
 }
 
 export interface FileSysNode {
@@ -23,7 +23,7 @@ export interface FileSysNode {
 
 const filesysTree: FileSysNode[] = [
     { name: "pages", type: 'folder', children: [ 
-        { name: "home.md", command: "home", type: 'file' }, 
+        { name: "experimental.js", command: "experimental", type: 'file' }, 
         { name: "about.md", command: "about", type: 'file' },
         { name: "projects.md", command: "projects", type: 'file' },
         { name: "contact.md", command: "contact", type: 'file' },
@@ -39,7 +39,6 @@ export default function Terminal({ pages }: TerminalProps) {
     const { theme } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [showBoot, setShowBoot] = useState(true);
-    const [debugInfo, setDebugInfo] = useState<string>('');
     const { entry, input, setInput, handleCommand, currentPage, mode, changeMode } = useUtilityTerminal(pages);
     const terminalBg = theme === "dark" ? "bg-black" : "bg-white";
     const terminalText = theme === "dark" ? "text-gray-300" : "text-gray-800";    
@@ -55,9 +54,6 @@ export default function Terminal({ pages }: TerminalProps) {
     }, []);
     
     const handleKeyDown = useCallback((event: KeyboardEvent) => {
-        const debugMsg = `Key: ${event.key}, Mode: ${mode}, ShowBoot: ${showBoot}`;
-        console.log(debugMsg);
-        setDebugInfo(debugMsg);
         
         if (showBoot) return;
         
@@ -80,7 +76,7 @@ export default function Terminal({ pages }: TerminalProps) {
             event.preventDefault();
             changeMode("normal");
         }
-    }, [mode, changeMode, showBoot, setDebugInfo]);
+    }, [mode, changeMode, showBoot]);
     
     useEffect(() => {
         document.addEventListener("keydown", handleKeyDown);
@@ -105,7 +101,7 @@ export default function Terminal({ pages }: TerminalProps) {
 
     return (
         <div className={`w-full h-screen flex flex-row ${terminalBg}`}>
-            <SideBar tree={filesysTree} onFileClick={handleSelection} />
+            <SideBar tree={filesysTree} onFileClick={handleSelection} selectedFile={showBoot ? "boot.log" : currentPage} />
 
             <div
                 ref={containerRef}
@@ -146,11 +142,6 @@ export default function Terminal({ pages }: TerminalProps) {
                 )}
             </div>
             
-            {process.env.NODE_ENV !== 'production' && (
-                <div className="fixed bottom-0 left-0 bg-red-800 text-white text-xs p-1 opacity-70 z-50">
-                    {debugInfo}
-                </div>
-            )}
         </div>
     );
 }

@@ -1,0 +1,11 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+* Only modify code directly relevant to the specific request. Avoid changing unrelated functionality.
+* Do not add any comments to the code. The code should be readable instead. Code should be readable (clear logical structure, maintainable using smaller helper functions/files, and easy to write unit tests for)
+* Break down problems into smaller steps. Think through each step separately before implementing.
+* Always provide a complete PLAN with REASONING based on evidence from code and logs before making changes.
+
+* Simplicity is key, avoid using overcomplex solutions. 

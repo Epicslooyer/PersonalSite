@@ -8,9 +8,10 @@ import type { FileSysNode } from "../terminal/terminal";
 interface BarProps {
     tree: FileSysNode[];
     onFileClick: (command: string) => void;
+    selectedFile?: string;
 }
 
-export default function SideBar({ tree, onFileClick }: BarProps) {
+export default function SideBar({ tree, onFileClick, selectedFile }: BarProps) {
     const { theme } = useTheme();
     const sidebarBg = theme === 'dark' ? 'bg-[#1e2029]' : 'bg-gray-100'; 
     const textColour = theme === 'dark' ? 'text-[#a9b1d6]' : 'text-gray-700';
@@ -31,6 +32,7 @@ export default function SideBar({ tree, onFileClick }: BarProps) {
               level={0} 
               isLast={index === tree.length - 1}
               hoverBg={hoverBg}
+              selectedFile={selectedFile}
             />
           ))}
         </ul>      </div>

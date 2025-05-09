@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "animejs": "^4.0.2",
+    "fuse.js": "^7.1.0"
+  }
+}
