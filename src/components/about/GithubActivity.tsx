@@ -23,16 +23,19 @@ function getPastYearDates() {
 }
 
 async function fetchUserContributions(username: string): Promise<Record<string, number>> {
-  const res = await fetch("/api/github", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username }),
-  });
-  const json = await res.json();
-  console.log(json);
-  return json;
+  try {
+    const res = await fetch("/api/github", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username }),
+    });
+    if (!res.ok) return {};
+    const json = await res.json();
+    if (!json || json.error) return {};
+    return json;
+  } catch {
+    return {};
+  }
 }
 
 function mergeContributions(a: Record<string, number>, b: Record<string, number>): Record<string, number> {
@@ -51,7 +54,7 @@ function getColor(count: number) {
   return "bg-green-300 border border-green-600";
 }
 
-export default function GithubActivity({ usernames }: { usernames: [string, string] }) {
+export default function GithubActivity({ usernames }: { usernames: string[] }) {
   const [activity, setActivity] = useState<DayActivity[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,12 +62,9 @@ export default function GithubActivity({ usernames }: { usernames: [string, stri
     let cancelled = false;
     async function load() {
       setLoading(true);
-      const [a, b] = await Promise.all([
-        fetchUserContributions(usernames[0]),
-        fetchUserContributions(usernames[1]),
-      ]);
+      const maps = await Promise.all(usernames.map((name) => fetchUserContributions(name)));
       if (!cancelled) {
-        const merged = mergeContributions(a, b);
+        const merged = maps.reduce((acc, m) => mergeContributions(acc, m), {} as Record<string, number>);
         const days = getPastYearDates().map(date => ({ date, count: merged[date] || 0 }));
         setActivity(days);
         setLoading(false);
@@ -74,7 +74,18 @@ export default function GithubActivity({ usernames }: { usernames: [string, stri
     return () => { cancelled = true; };
   }, [usernames]);
 
-  if (loading) return <div className="text-gray-400 font-mono">Loading GitHub activity...</div>;
+  if (loading) return <div className="text-gray-400 font-mono text-sm">Loading GitHub activity…</div>;
+  if (!activity.some((d) => d.count > 0)) {
+    return (
+      <div className="text-gray-500 font-mono text-sm">
+        Heatmap needs a <code>GITHUB_TOKEN</code> on the server. Until then,{" "}
+        <a className="text-blue-400 hover:underline" href="https://github.com/Epicslooyer">
+          github.com/Epicslooyer
+        </a>
+        .
+      </div>
+    );
+  }
 
   const weeks: DayActivity[][] = [];
   for (let i = 0; i < activity.length; i += 7) {

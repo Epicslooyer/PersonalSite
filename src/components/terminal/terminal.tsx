@@ -9,33 +9,14 @@ import Top from "./bar/top";
 import SideBar from "../sidebar/bar";
 import BootSequence from "./utilities/boot";
 import ClearSequence from "./utilities/clear";
+import { fileSysTree, type FileSysNode } from "@/data/commands";
+
+export type { FileSysNode };
 
 interface TerminalProps {
   pages: Record<string, string | JSX.Element>;
   isMobile: boolean;
 }
-
-export interface FileSysNode {
-    name: string;
-    type: 'file' | 'folder';
-    icon?: string;
-    command?: string;
-    children?: FileSysNode[];
-}
-
-const filesysTree: FileSysNode[] = [
-    { name: "pages", type: 'folder', children: [ 
-        { name: "experimental.js", command: "experimental", type: 'file' }, 
-        { name: "about.md", command: "about", type: 'file' },
-        { name: "projects.md", command: "projects", type: 'file' },
-        { name: "contact.md", command: "contact", type: 'file' },
-    ]},
-    {
-        name: "config", type: 'folder', children: [ 
-            { name: "help.txt", command: "help", type: 'file' },
-        ]
-    },
-];
 
 export default function Terminal({ pages, isMobile }: TerminalProps) {
     const { theme } = useTheme();
@@ -120,7 +101,7 @@ export default function Terminal({ pages, isMobile }: TerminalProps) {
     return (
         <div className={`w-full h-screen flex ${isMobile ? "flex-col" : "flex-row"} ${terminalBg}`}>
             <SideBar 
-                tree={filesysTree} 
+                tree={fileSysTree} 
                 onFileClick={handleSelection} 
                 selectedFile={showBoot ? "boot.log" : currentPage}
                 isMobile={isMobile}

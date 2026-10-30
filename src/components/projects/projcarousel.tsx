@@ -1,87 +1,42 @@
 "use client";
-import React from "react";
-import { useTheme } from "next-themes";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../ui/carousel";
-import Project from "./proj";
+import { useState } from "react";
+import { projects, projectFilters } from "@/data/projects";
+import ProjectCard from "./proj";
 
-const projects = [
-  {
-    title: "Project 1",
-    description: [
-      "A full-stack web application built with Next.js and TypeScript.",
-      "Features include real-time updates, authentication, and responsive design.",
-      "Implements modern web development practices and best practices.",
-    ],
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma"],
-    image: "/path/to/project1-image.jpg",
-    githubLink: "https://github.com/yourusername/project1",
-    siteLink: "https://project1.com",
-  },
-  {
-    title: "Project 1",
-    description: [
-      "A full-stack web application built with Next.js and TypeScript.",
-      "Features include real-time updates, authentication, and responsive design.",
-      "Implements modern web development practices and best practices.",
-    ],
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma"],
-    image: "/path/to/project1-image.jpg",
-    githubLink: "https://github.com/yourusername/project1",
-    siteLink: "https://project1.com",
-  },
-  {
-    title: "Project 3",
-    description: ["This is another project for testing scrollability."],
-    tags: ["Example"],
-    image: "/placeholder.jpg",
-    githubLink: "#",
-    siteLink: "#",
-  },
-  {
-    title: "Project 4",
-    description: ["Another one to push carousel limits."],
-    tags: ["Placeholder"],
-    image: "/placeholder.jpg",
-    githubLink: "#",
-    siteLink: "#",
-  },
-];
+const labels: Record<(typeof projectFilters)[number], string> = {
+  all: "all",
+  ml: "ml",
+  web: "web",
+  automation: "auto",
+  systems: "sys",
+};
 
-export default function ProjectCarousel() {
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
-  const [setApi] = React.useState();
+export default function ProjectGrid() {
+  const [filter, setFilter] = useState<(typeof projectFilters)[number]>("all");
+  const visible = filter === "all" ? projects : projects.filter((p) => p.category === filter);
 
   return (
-    <div className={`w-full flex justify-start px-6 ${isDark ? "text-gray-100" : "text-gray-900"}`}>
-        <div className="w-[370px]">
-      <Carousel
-        setApi={setApi}
-        opts={{
-          align: "start",
-          loop: true,
-        }}
-        className="w-full"
-        plugins={[]}
-      >
-        <CarouselContent className="-ml-4">
-          {projects.map((project, index) => (
-            <CarouselItem key={index} className="pl-4 basis-auto ">
-              <div className="p-1 w-full sm:w-[350px]">
-                <Project {...project} />
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className={`${isDark ? "text-gray-100" : "text-gray-900"}`} />
-        <CarouselNext className={`${isDark ? "text-gray-100" : "text-gray-900"}`} />      </Carousel>
-    </div>
+    <div className="w-full max-w-3xl py-2">
+      <div className="flex flex-wrap gap-2 mb-4">
+        {projectFilters.map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-3 py-1 text-xs font-mono rounded border ${
+              filter === f
+                ? "bg-blue-600 border-blue-400 text-white"
+                : "bg-gray-900 border-gray-700 text-gray-300 hover:border-blue-500"
+            }`}
+          >
+            {labels[f]}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {visible.map((project) => (
+          <ProjectCard key={project.title} project={project} />
+        ))}
+      </div>
     </div>
   );
 }

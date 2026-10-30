@@ -1,33 +1,23 @@
-import React from "react";
-import { FaJs, FaPython, FaReact, FaNodeJs, FaDocker, FaGitAlt, FaLinux  } from "react-icons/fa";
-import { SiTypescript, SiGnubash, SiC} from "react-icons/si";
-import { DiPostgresql } from "react-icons/di";
-
-const skills = [
-  { name: "JavaScript", icon: <FaJs className="text-yellow-400" /> },
-  { name: "Typescript", icon: <SiTypescript className="text-blue-400" /> },
-  { name: "C", icon: <SiC className="text-blue-400" /> },
-  { name: "Bash", icon: <SiGnubash className="text-blue-400" /> },
-  { name: "Python", icon: <FaPython className="text-blue-400" /> },
-  { name: "React", icon: <FaReact className="text-cyan-400" /> },
-  { name: "Node.js", icon: <FaNodeJs className="text-green-500" /> },
-  { name: "Docker", icon: <FaDocker className="text-blue-300" /> },
-  { name: "Git", icon: <FaGitAlt className="text-orange-500" /> },
-  { name: "Linux", icon: <FaLinux className="text-gray-400" /> },
-  { name: "SQL", icon: <DiPostgresql className="text-indigo-400" /> },
-];
+import { skillGroups } from "@/data/skills";
 
 export default function Skills() {
   return (
-    <div className="w-full max-w-lg py-4">
-      <div className="grid grid-cols-4 gap-3">
-        {skills.map(skill => (
-          <div key={skill.name} className="flex flex-col items-center gap-1 p-2 bg-gray-800 rounded font-mono">
-            <div className="text-xl">{skill.icon}</div>
-            <div className="text-gray-200 text-xs">{skill.name}</div>
+    <div className="w-full py-2 flex flex-col gap-5">
+      {skillGroups.map((group) => (
+        <div key={group.label}>
+          <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-2">{group.label}</h3>
+          <div className="flex flex-wrap gap-2">
+            {group.items.map((item) => (
+              <span
+                key={item}
+                className="px-2 py-1 text-xs font-mono rounded bg-gray-800 text-gray-200 border border-gray-700"
+              >
+                {item}
+              </span>
+            ))}
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
-} 
+}

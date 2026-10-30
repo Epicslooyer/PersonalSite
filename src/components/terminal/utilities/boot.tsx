@@ -38,8 +38,9 @@ const bootMessages = [
   "[    0.220478] Parsing markdown files...",
   "[    0.239875] Finalizing setup...",
   "[OK] System initialized successfully.",
-  "Welcome to SajanOS 1.0.0",
-  "Type 'help' for available commands."
+  "Welcome to SajanOS 2.0.0",
+  "Clockwork Energy · Tangent Lab · SFU Computing Science",
+  "Type :help  —  :lab opens the CNN playground."
 ];
 
 interface BootSequenceProps {
